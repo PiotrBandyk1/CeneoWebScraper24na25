@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Ekstrakcja opinii o produkcie
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ekstrakcja opinii z Ceneo.pl</h2>
+    <form method="POST" action="{{ url_for('extract') }}">
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="product_id" class="visually-hidden">Kod produktu</label>
+                <input type="text" class="form-control" id="product_id" name="product_id" placeholder="Kod produktu" required>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Pobierz opinie</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

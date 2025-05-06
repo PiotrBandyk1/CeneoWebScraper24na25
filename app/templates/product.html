@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Produkt - {{ product.product_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ product.product_name }}</h2>
+    <br />
+    <p><strong>ID:</strong> {{ product.product_id }}</p>
+    <p><strong>Średnia ocena:</strong> {{ product.average_stars | round(2) }}</p>
+    <p><strong>Liczba opinii:</strong> {{ product.opinions_count }}</p>
+
+    <hr>
+
+    <h4>Opinie:</h4>
+    <br />
+    {% if opinions %}
+        <div class="list-group">
+            {% for op in opinions %}
+                <div class="list-group-item mb-4 p-3 border rounded">
+                    <h5>{{ op.author }} – {{ op.stars }} gwiazdek</h5>
+                    <p>{{ op.content }}</p>
+
+                    {% if op.pros %}
+                        <p><strong>Zalety:</strong> {{ op.pros | join(", ") }}</p>
+                    {% endif %}
+                    {% if op.cons %}
+                        <p><strong>Wady:</strong> {{ op.cons | join(", ") }}</p>
+                    {% endif %}
+
+                    <small>
+                        <strong>Rekomendacja:</strong> 
+                        {% if op.recommendation == 'Polecam' %}
+                            <span style="color: green;">Polecam</span>
+                        {% else %}
+                            <span style="color: red;">Nie polecam</span>
+                        {% endif %}
+                        |
+                        <strong>Przydatna:</strong> {{ op.useful }} / {{ op.useless }}
+                    </small>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Brak opinii dla tego produktu.</p>
+    {% endif %}
+</div>
+{% endblock %}

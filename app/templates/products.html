@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Lista produktów
+{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 30px;">Lista dostępnych produktów</h1>
+
+{% if products %}
+  {% for product in products %}
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; background-color: #f9f9f9;">
+      
+      <!-- LEWA STRONA -->
+      <div style="flex: 2; padding-right: 20px;">
+        <h3 style="font-size: 1.5rem; color: #333;">{{ product["product_name"] }}</h3>
+        <p style="font-size: 1rem; color: #666;"><strong>ID Produktu:</strong> {{ product["product_id"] }}</p>
+        <p style="font-size: 1rem; color: #666;"><strong>Liczba opinii:</strong> {{ product["opinions_count"] }}</p>
+        <p style="font-size: 1rem; color: #666;"><strong>Średnia ocena:</strong> {{ product["average_stars"] | round(2) }} ⭐</p>
+      </div>
+
+      <!-- PRAWA STRONA -->
+      <div style="flex: 1; padding-left: 20px; text-align: left;">
+        <h4 style="font-size: 1.2rem; color: #444;">👍👎 Rekomendacje:</h4>
+        <p style="font-size: 1rem; color: #555;">
+          <strong style="color: green;">Polecam:</strong> {{ product["recommendation_distr"]["Polecam"] }} | 
+          <strong style="color: red;">Nie polecam:</strong> {{ product["recommendation_distr"]["Nie polecam"] }}
+        </p>
+        <!-- Przycisk do przejścia do strony produktu -->
+        <a href="{{ url_for('product', product_id=product['product_id']) }}" class="btn btn-primary" style="margin-top: 10px;">Zobacz szczegóły</a>
+      </div>
+
+    </div>
+  {% endfor %}
+{% else %}
+  <p style="text-align: center; font-size: 1.2rem; color: #777;">Brak produktów do wyświetlenia.</p>
+{% endif %}
+{% endblock %}

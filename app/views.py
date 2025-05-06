@@ -43,3 +43,21 @@ def product(product_id):
     else:
         opinions_data = []
     return render_template("product.html", product=product_data, opinions=opinions_data)
+
+from flask import send_file, abort
+from pathlib import Path
+
+@app.route('/download/<product_id>/<file_type>')
+def download_opinions(product_id, file_type):
+    file_path = Path("app/data/opinions") / f"{product_id}.json"
+
+    if not file_path.exists():
+        return f"Brak pliku opinii dla produktu {product_id}", 404
+
+    if file_type == "json":
+        try:
+            return send_file(file_path.resolve(), as_attachment=True)
+        except Exception as e:
+            return f"Błąd przy próbie pobrania pliku: {e}", 500
+
+    return abort(400, "Nieobsługiwany format")

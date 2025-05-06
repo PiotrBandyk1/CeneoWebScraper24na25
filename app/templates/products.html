@@ -13,7 +13,12 @@ Lista produktów
       
       <!-- LEWA STRONA -->
       <div style="flex: 2; padding-right: 20px;">
-        <h3 style="font-size: 1.5rem; color: #333;">{{ product["product_name"] }}</h3>
+        <!-- Link do strony produktu z podkreśleniem -->
+        <h3 style="font-size: 1.5rem; color: #333;">
+            <a href="{{ url_for('product', product_id=product['product_id']) }}" style="text-decoration: underline; color: #333;">
+                {{ product["product_name"] }}
+            </a>
+        </h3>
         <p style="font-size: 1rem; color: #666;"><strong>ID Produktu:</strong> {{ product["product_id"] }}</p>
         <p style="font-size: 1rem; color: #666;"><strong>Liczba opinii:</strong> {{ product["opinions_count"] }}</p>
         <p style="font-size: 1rem; color: #666;"><strong>Średnia ocena:</strong> {{ product["average_stars"] | round(2) }} ⭐</p>
@@ -26,6 +31,8 @@ Lista produktów
           <strong style="color: green;">Polecam:</strong> {{ product["recommendation_distr"]["Polecam"] }} | 
           <strong style="color: red;">Nie polecam:</strong> {{ product["recommendation_distr"]["Nie polecam"] }}
         </p>
+        <!-- Przycisk do pobrania pliku JSON -->
+        <a href="{{ url_for('download_opinions', product_id=product['product_id'], file_type='json') }}" class="btn btn-secondary" style="margin-top: 10px;">Pobierz opinie (JSON)</a>
         <!-- Przycisk do przejścia do strony produktu -->
         <a href="{{ url_for('product', product_id=product['product_id']) }}" class="btn btn-primary" style="margin-top: 10px;">Zobacz szczegóły</a>
       </div>

@@ -1,45 +1,132 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}
-Lista produktów
+Lista Produktów
 {% endblock %}
 
 {% block content %}
-<h1 style="text-align: center; margin-bottom: 30px;">Lista dostępnych produktów</h1>
+<div class="container-fluid py-5" style="background-color: #f2f2f2; min-height: 100vh;">
+    <h2 class="text-center mb-5" style="font-size: 3rem; color: #2c3e50; font-weight: 700;">Lista Produktów</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
 
-{% if products %}
-  {% for product in products %}
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; background-color: #f9f9f9;">
-      
-      <!-- LEWA STRONA -->
-      <div style="flex: 2; padding-right: 20px;">
-        <!-- Link do strony produktu z podkreśleniem -->
-        <h3 style="font-size: 1.5rem; color: #333;">
-            <a href="{{ url_for('product', product_id=product['product_id']) }}" style="text-decoration: underline; color: #333;">
-                {{ product["product_name"] }}
-            </a>
-        </h3>
-        <p style="font-size: 1rem; color: #666;"><strong>ID Produktu:</strong> {{ product["product_id"] }}</p>
-        <p style="font-size: 1rem; color: #666;"><strong>Liczba opinii:</strong> {{ product["opinions_count"] }}</p>
-        <p style="font-size: 1rem; color: #666;"><strong>Średnia ocena:</strong> {{ product["average_stars"] | round(2) }} ⭐</p>
-      </div>
-
-      <!-- PRAWA STRONA -->
-      <div style="flex: 1; padding-left: 20px; text-align: left;">
-        <h4 style="font-size: 1.2rem; color: #444;">👍👎 Rekomendacje:</h4>
-        <p style="font-size: 1rem; color: #555;">
-          <strong style="color: green;">Polecam:</strong> {{ product["recommendation_distr"]["Polecam"] }} | 
-          <strong style="color: red;">Nie polecam:</strong> {{ product["recommendation_distr"]["Nie polecam"] }}
-        </p>
-        <!-- Przycisk do pobrania pliku JSON -->
-        <a href="{{ url_for('download_opinions', product_id=product['product_id'], file_type='json') }}" class="btn btn-secondary" style="margin-top: 10px;">Pobierz opinie (JSON)</a>
-        <!-- Przycisk do przejścia do strony produktu -->
-        <a href="{{ url_for('product', product_id=product['product_id']) }}" class="btn btn-primary" style="margin-top: 10px;">Zobacz szczegóły</a>
-      </div>
-
+        {% for product in products %}
+        <div class="col mb-4">
+            <div class="card border-0 rounded-3 shadow-lg" style="background-color: #ffffff; height: 100%; transition: transform 0.3s ease-in-out;">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center" style="font-size: 1.8rem; color: #34495e; font-weight: 600; margin-bottom: 20px;">{{ product.product_name }}</h5>
+                    <p class="card-text" style="color: #7f8c8d; font-size: 1.1rem; line-height: 1.6;">
+                        <strong>ID:</strong> {{ product.product_id }}<br>
+                        <strong>Średnia ocen:</strong> {{ product.average_stars | round(1) }}
+                        <span class="ms-2 text-warning">
+                            {% set stars = product.average_stars %}
+                            {% if stars % 1 >= 0.5 %}
+                                {% set stars = stars | round(0, 'floor') + 1 %}
+                            {% else %}
+                                {% set stars = stars | round(0, 'floor') %}
+                            {% endif %}
+                            {% for i in range(stars | int) %}
+                                ⭐
+                            {% endfor %}
+                        </span><br>
+                        <strong>Liczba opinii:</strong> {{ product.opinions_count }}<br>
+                        <span class="text-success"><strong>Liczba zalet:</strong> {{ product.pros_count }}</span> | 
+                        <span class="text-danger"><strong>Liczba wad:</strong> {{ product.cons_count }}</span>
+                    </p>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('product', product_id=product.product_id) }}" class="btn btn-primary btn-lg w-100" style="font-size: 1.1rem; padding: 14px 20px; border-radius: 30px; transition: background-color 0.3s ease;">
+                            <i class="fas fa-eye"></i> Zobacz szczegóły
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{{ url_for('download_json', product_id=product.product_id) }}" class="btn btn-outline-primary btn-lg w-100" style="font-size: 1.1rem; padding: 14px 20px; border-radius: 30px;">
+                            <i class="fas fa-download"></i> Pobierz JSON
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
     </div>
-  {% endfor %}
-{% else %}
-  <p style="text-align: center; font-size: 1.2rem; color: #777;">Brak produktów do wyświetlenia.</p>
-{% endif %}
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+
+    .container-fluid {
+        background-color: #f2f2f2;
+        min-height: 100vh;
+        padding: 30px 0;
+    }
+
+    h2 {
+        font-size: 3rem;
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        border: none;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+        background-color: #3498db;
+        border-color: #3498db;
+        color: white;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+    }
+
+    .btn-outline-primary {
+        color: #3498db;
+        border-color: #3498db;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+
+    .card-text {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        color: #34495e;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .btn i {
+        margin-right: 10px;
+    }
+
+</style>
 {% endblock %}

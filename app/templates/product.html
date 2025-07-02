@@ -1,50 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}
-    Produkt - {{ product.product_name }}
-{% endblock %}
+{% block title %}Produkt {{ product.product_name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>{{ product.product_name }}</h2>
-    <br />
-    <p><strong>ID:</strong> {{ product.product_id }}</p>
-    <p><strong>Średnia ocena:</strong> {{ product.average_stars | round(2) }}</p>
-    <p><strong>Liczba opinii:</strong> {{ product.opinions_count }}</p>
+<div class="container my-5">
+    <h2 class="mb-3">{{ product.product_name }}</h2>
 
-    <hr>
+    <div class="mb-4 d-flex gap-2">
+        <a href="{{ url_for('download_json', product_id=product.product_id) }}" class="btn btn-outline-secondary">
+            📥 Pobierz JSON
+        </a>
+        <a href="{{ url_for('charts', product_id=product.product_id) }}" class="btn btn-outline-warning">
+            📊 Zobacz wykresy
+        </a>
+    </div>
 
-    <h4>Opinie:</h4>
-    <br />
-    {% if opinions %}
-        <div class="list-group">
-            {% for op in opinions %}
-                <div class="list-group-item mb-4 p-3 border rounded">
-                    <h5>{{ op.author }} – {{ op.stars }} gwiazdek</h5>
-                    <p>{{ op.content }}</p>
-
-                    {% if op.pros %}
-                        <p><strong>Zalety:</strong> {{ op.pros | join(", ") }}</p>
-                    {% endif %}
-                    {% if op.cons %}
-                        <p><strong>Wady:</strong> {{ op.cons | join(", ") }}</p>
-                    {% endif %}
-
-                    <small>
-                        <strong>Rekomendacja:</strong> 
-                        {% if op.recommendation == 'Polecam' %}
-                            <span style="color: green;">Polecam</span>
-                        {% else %}
-                            <span style="color: red;">Nie polecam</span>
-                        {% endif %}
-                        |
-                        <strong>Przydatna:</strong> {{ op.useful }} / {{ op.useless }}
-                    </small>
-                </div>
-            {% endfor %}
+    <form method="GET" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <select name="sort_by" class="form-select">
+                <option value="stars" {% if request.args.get('sort_by') == 'stars' %}selected{% endif %}>Liczba gwiazdek</option>
+                <option value="post_date" {% if request.args.get('sort_by') == 'post_date' %}selected{% endif %}>Data opinii</option>
+                <option value="purchase_date" {% if request.args.get('sort_by') == 'purchase_date' %}selected{% endif %}>Data zakupu</option>
+                <option value="useful" {% if request.args.get('sort_by') == 'useful' %}selected{% endif %}>Przydatne</option>
+                <option value="useless" {% if request.args.get('sort_by') == 'useless' %}selected{% endif %}>Nieprzydatne</option>
+                <option value="pros" {% if request.args.get('sort_by') == 'pros' %}selected{% endif %}>Zalety</option>
+                <option value="cons" {% if request.args.get('sort_by') == 'cons' %}selected{% endif %}>Wady</option>
+            </select>
         </div>
+        <div class="col-md-2">
+            <select name="reverse" class="form-select">
+                <option value="false" {% if request.args.get('reverse') == 'false' %}selected{% endif %}>Rosnąco</option>
+                <option value="true" {% if request.args.get('reverse') == 'true' %}selected{% endif %}>Malejąco</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="filter_by" class="form-control" placeholder="Filtruj po treści" value="{{ request.args.get('filter_by', '') }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Zastosuj</button>
+        </div>
+    </form>
+
+    {% if opinions %}
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Autor</th>
+                    <th>Rekomendacja</th>
+                    <th>⭐</th>
+                    <th>Kupiono</th>
+                    <th>Opinia</th>
+                    <th>Zakup</th>
+                    <th>👍</th>
+                    <th>👎</th>
+                    <th>Treść</th>
+                    <th>Zalety</th>
+                    <th>Wady</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for op in opinions %}
+                <tr>
+                    <td>{{ op.opinion_id }}</td>
+                    <td>{{ op.author }}</td>
+                    <td>
+                        {% if op.recommendation == "Polecam" %}
+                            <span class="text-success">{{ op.recommendation }}</span>
+                        {% elif op.recommendation == "Nie polecam" %}
+                            <span class="text-danger">{{ op.recommendation }}</span>
+                        {% else %}
+                            <span class="text-muted">Brak</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ op.stars }}</td>
+                    <td>{{ "Tak" if op.purchased else "Nie" }}</td>
+                    <td>{{ op.post_date }}</td>
+                    <td>{{ op.purchase_date }}</td>
+                    <td>{{ op.useful }}</td>
+                    <td>{{ op.useless }}</td>
+                    <td>
+                        {% if op.content|length > 80 %}
+                            <div>
+                                {{ op.content[:80] }}...
+                                <a class="btn btn-sm btn-link" data-bs-toggle="collapse" href="#full-content-{{ op.opinion_id }}">
+                                    więcej
+                                </a>
+                                <div class="collapse mt-2" id="full-content-{{ op.opinion_id }}">
+                                    {{ op.content }}
+                                </div>
+                            </div>
+                        {% else %}
+                            {{ op.content }}
+                        {% endif %}
+                    </td>
+                    <td>{{ op.pros | join(", ") if op.pros else "—" }}</td>
+                    <td>{{ op.cons | join(", ") if op.cons else "—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <p>Brak opinii dla tego produktu.</p>
+    <div class="alert alert-info">Brak wyników dla podanych kryteriów.</div>
     {% endif %}
 </div>
 {% endblock %}

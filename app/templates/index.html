@@ -1,49 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-7">
-            <h3 class="mb-4">Opis projektu</h3>
-
-            <div class="mb-4">
-                <h5>Cel aplikacji</h5>
-                <p>Aplikacja służy do przeglądania i pobierania opinii o produktach zebranych ze sklepu internetowego Ceneo.pl.</p>
-            </div>
-
-            <div class="mb-4">
-                <h5>Opis działania aplikacji</h5>
-                <ul>
-                    <li>Użytkownik może wprowadzić ID produktu i przejść do widoku z opiniami.</li>
-                    <li>Lista produktów pokazuje nazwę, liczbę opinii, ocenę i rekomendacje.</li>
-                    <li>Opinie zawierają autora, ocenę, treść, rekomendację, zalety i wady.</li>
-                    <li>Możliwość pobrania opinii w formatach JSON, CSV, XLSX.</li>
-                </ul>
-            </div>
-
-            <div class="mb-4">
-                <h5>Zastosowane biblioteki</h5>
-                <ul>
-                    <li><strong>Flask</strong> - mikroframework do tworzenia aplikacji webowych w Pythonie.</li>
-                    <li><strong>Jinja2</strong> - silnik szablonów HTML używany przez Flask.</li>
-                    <li><strong>Pandas</strong> - biblioteka do analizy danych i manipulacji danymi.</li>
-                    <li><strong>Bootstrap</strong> - framework CSS do tworzenia responsywnych interfejsów.</li>
-                </ul>
-            </div>
-
-            <div>
-
-            </div>
-        </div>
-
-        <div class="col-md-5 text-center d-flex align-items-center justify-content-center">
-            <div>
-                <h2>Witaj na stronie głównej!</h2>
-                <p>To jest główna strona aplikacji <strong>Ceneo.pl Web Scraper</strong>.</p>
-            </div>
-        </div>
+    <div class="text-center">
+        <h2>Witaj na stronie głównej!</h2>
+        <p>To jest główna strona aplikacji Ceneo.pl Web Scraper.</p>
     </div>
-</div>
-
 {% endblock %}
